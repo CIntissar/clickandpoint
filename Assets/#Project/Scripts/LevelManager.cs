@@ -16,6 +16,7 @@ public class GameData
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager instance;
+    public bool loaded = true;
     public GameData data;
     public void Save() 
     {
@@ -46,6 +47,28 @@ public class LevelManager : MonoBehaviour
         }
     
     }
+    
+    public void Load()
+    {
+        GameData data = null; // = null / Instance toujours = null afin que la condition en bas, soit toujours vraie!
+        
+        if(File.Exists(Application.persistentDataPath + "/data.dat"))
+        {
+
+            FileStream file = File.Open(Application.persistentDataPath + "/data.dat",FileMode.Open);
+            try
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                data = bf.Deserialize(file) as GameData;
+            }
+            finally
+            {
+                file.Close();
+            }
+        }
+        Initialize(data);
+
+    }
     void Start()
     {
         if(instance == null)
@@ -66,6 +89,38 @@ public class LevelManager : MonoBehaviour
         {
             Save();
             Application.Quit();
+        }
+    }
+
+    public void Initialize(GameData data = null) 
+    {
+        // GameData data = null -> pour permettre de charger avec ou sans gamedata!
+
+        AshBehavior ash = FindObjectOfType<AshBehavior>();
+        CubeBehavior[] cubes = FindObjectsOfType<CubeBehavior>();
+
+        if (data != null)
+        {
+            ash.colorIndex = data.AshColor;
+            Vector3 position = new Vector3(
+                data.AshPosition[0],
+                data.AshPosition[1],
+                data.AshPosition[2]
+            );
+
+            ash.transform.position = position;
+
+            for(int i = 0; i < cubes.Length; i++)
+            {
+                cubes[i].colorIndex = data.CubesColor[i];
+            }
+        }
+
+        ash.Initialize();
+        
+        for(int i = 0; i < cubes.Length; i++)
+        {
+            cubes[i].Initialize();
         }
     }
 }

@@ -11,8 +11,10 @@ public class AshBehavior : MonoBehaviour
     private NavMeshAgent agent;
     private CubeBehavior cubeDestination;
     public int colorIndex;
+    public bool loaded = false;
+
     
-    void Start()
+    public void Initialize()
     {
         if(materials == null || materials.Length < 4)
         {
@@ -21,8 +23,11 @@ public class AshBehavior : MonoBehaviour
         }
         else 
         {
-            int index = Random.Range(0,3);
-            GetComponent<Renderer>().material = materials[colorIndex];
+            if(!loaded)
+            {
+                colorIndex = Random.Range(0,3);
+                GetComponent<Renderer>().material = materials[colorIndex];
+            }
         }
 
         agent = GetComponent<NavMeshAgent>();

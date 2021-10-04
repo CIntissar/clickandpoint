@@ -6,10 +6,13 @@ public class CubeBehavior : MonoBehaviour
 {
     public AshBehavior ash;
     public int colorIndex;
-    // Start is called before the first frame update
-    void Start()
+    public bool loaded = false;
+    public void Initialize()
     {
-        int index = Random.Range(0,4);
+        if(!loaded)
+        {
+            colorIndex = Random.Range(0,4);
+        }
 
         if(ash == null)
         {
